@@ -144,7 +144,6 @@ class Result(db.Model):
     token = db.Column(db.String, index=True, nullable=False)
     is_bounded = db.Column(db.Boolean, nullable=False, default=True)
     iterations = db.Column(db.Integer, nullable=True)
-    time_taken = db.Column(db.Float, nullable=True)
     misc = db.Column(db.JSON)
 
     experiment_id = db.Column(db.Integer,
@@ -152,6 +151,9 @@ class Result(db.Model):
                               index=True,
                               nullable=False)
     experiment = db.relationship('Experiment', back_populates='results')
+
+    time_taken = db.Column(db.Float, nullable=True)
+
     solution = db.relationship('Solution', uselist=False, back_populates='result')
 
     def __init__(self,

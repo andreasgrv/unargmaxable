@@ -10,9 +10,11 @@
 ## Contents
 
 This repository contains algorithms for detecting **unargmaxable** classes in low-rank softmax layers.
+A softmax layer is by construction low-rank if we have C > d + 1, where C is the number of classes
+and d is the dimensionality of the input feature vector.
 
-It also contains code to reproduce our results, tables and figures from our paper that was accepted to ACL 2022.
-
+### [Low-Rank Softmax Can Have Unargmaxable Classes in Theory but Rarely in Practice](https://arxiv.org/abs/2203.06462)
+The repository also contains code to reproduce our results, tables and figures from our paper that was accepted to ACL 2022.
 
 # Installation
 
@@ -37,6 +39,7 @@ export FLASK_APP="$PWD/stollen/server"
 mkdir models
 export TRANSFORMERS_CACHE="$PWD/models"
 ```
+
 
 ### Details on environment variables
 * `export OMP_NUM_THREADS=1` is needed as otherwise we don't benefit from multithreading (numpy hogs all threads).
@@ -119,34 +122,65 @@ NB: The script does not work with any arbitrary model: It needs to be adapted if
 
 # Reproducing the Paper Results
 
-## More Installation Steps needed
-
-
-### Install database
-```bash
-cd db
-
-export DB_FOLDER="$PWD/stollen_data"
-export DB_PORT=5436
-export DB_USER=`whoami`
-export DB_NAME=stollenprob
-export DB_PASSWD="cov1d"
-export PGPASSWORD=$DB_PASSWD
-export DB_HOST="localhost"
-export DB_SSL="prefer"
-
-./install.sh
-```
 
 ## Run experiments
 
 Scripts to reproduce experiments can be found [here](experiments/stollen_search), see the README.md file for details.
 The scripts generally write to a postgres database, but the ``save-db`` parameter can be toggled within the script to change that.
 
-## Recreate tables and figures
+## Recreate tables and figures from the original experiments
+
+### More Installation Steps needed
+
+#### OS dependencies
+
+* wget
+* gunzip
+* psql
+
+
+#### Install database
+```bash
+export FLASK_APP="$PWD/stollen/server"
+cd db
+
+export DB_FOLDER="$PWD/stollen_data"
+export DB_PORT=5436
+export DB_USER=`whoami`
+export DB_NAME=stollenprob
+# fun times
+export DB_PASSWD="cov1d"
+export PGPASSWORD=$DB_PASSWD
+export DB_HOST="localhost"
+export DB_SSL="prefer"
+
+# Creates the database, tables etc.
+./install.sh
+
+# Will download the tables in CSV format from aws s3
+# and populate the psql database
+# (the csv files are saved in the data folder - e.g. if you want to use pandas)
+./download_and_populate_db.sh
+```
+
+#### Deleting the database after done
+
+From the `db` folder, run:
+
+```bash
+# IMPORTANT: Run stop before deleting any files
+./stop.sh
+rm -r stollen_data
+rm -r migrations
+```
 
 The following scripts generally accept a file with experiment ids to plot/aggregate.
-You can use these with the experiment ids generated if you run experiments and save them to the database.
+For example:
+
+```
+cd ../paper/plots
+python plot_bounded.py  --ids-file datafiles/bounded.txt --title "bounded models"
+```
 
 ```
 paper/
@@ -165,15 +199,20 @@ paper/
     └── print_bounded_table.py
 ```
 
-We plan to release our own database files after the anonymity period.
+You can use the above with the experiment ids generated from your own experiments, assuming you save them to the database.
+
+### Generating plots from the paper
+
+From the `paper/plots` folder run:
+```bash
+./plot.sh
+```
+This assumes you have installed and populated the database mentioned above.
 
 # Related Work
 
 * [Demeter(2020)](https://arxiv.org/abs/2005.02433) identified that unargmaxable classes can arise in classification layers and coined the more general phenomenon Stolen Probability.
-* Warren D. Smith comprehensively summarises [the history of the problem](https://rangevoting.org/WilsonOrder.html)
-
-# Trivia
-As we get closer to Christmas, [stollen](https://en.wikipedia.org/wiki/Stollen) probability increases.
+* Warren D. Smith comprehensively summarises [the history of the problem](https://rangevoting.org/WilsonOrder.html).
 
 
 # Citation
@@ -190,3 +229,6 @@ Please cite our work as:
   volume={abs/2203.06462}
 }
 ```
+
+# Trivia
+As we get closer to Christmas, [stollen](https://en.wikipedia.org/wiki/Stollen) probability increases.
