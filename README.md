@@ -221,12 +221,20 @@ Please cite our work as:
 
 
 ```
-@inproceedings{grivas2022,
-  title={Low-Rank Softmax Can Have Unargmaxable Classes in Theory but Rarely in Practice},
-  author={Andreas Grivas and Nikolay Bogoychev and Adam Lopez},
-  journal={ArXiv},
-  year={2022}
-  volume={abs/2203.06462}
+@inproceedings{grivas-etal-2022-low,
+    title = "Low-Rank Softmax Can Have Unargmaxable Classes in Theory but Rarely in Practice",
+    author = "Grivas, Andreas  and
+      Bogoychev, Nikolay  and
+      Lopez, Adam",
+    booktitle = "Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.acl-long.465",
+    doi = "10.18653/v1/2022.acl-long.465",
+    pages = "6738--6758",
+    abstract = "Classifiers in natural language processing (NLP) often have a large number of output classes. For example, neural language models (LMs) and machine translation (MT) models both predict tokens from a vocabulary of thousands. The Softmax output layer of these models typically receives as input a dense feature representation, which has much lower dimensionality than the output. In theory, the result is some words may be impossible to be predicted via argmax, irrespective of input features, and empirically, there is evidence this happens in small language models (Demeter et al., 2020). In this paper we ask whether it can happen in practical large language models and translation models. To do so, we develop algorithms to detect such unargmaxable tokens in public models. We find that 13 out of 150 models do indeed have such tokens; however, they are very infrequent and unlikely to impact model quality. We release our algorithms and code to the public.",
 }
 ```
 
